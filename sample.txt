@@ -6,8 +6,9 @@ FROM python:3.7.5
 # SKIP CREATING WORKDIR AS with user it will be created
 # CREATE THE USER FOR APP with app name
 
-RUN useradd -ms /bin/bash app
-WORKDIR /home/app
+# RUN useradd -ms /bin/bash app
+RUN mkdir /app
+WORKDIR /app
 
 # SET DEFAULT ENV VAR
 
@@ -16,10 +17,11 @@ ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
 # SET CUSTOM ENV VAR
-ENV HOME=/home/app/
+ENV HOME=/app/
 
 # ADD CURRENT CODE TO /app
 ADD . $HOME
+
 # EXPLIT COPY OF entrypoint.prod.sh JUST TO ensure
 COPY entrypoint.prod.sh $HOME
 
@@ -41,15 +43,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # INSTALL ENV DEPENDENCIES
 
+# CHANGE TO app user
+# USER app
 
 
 # ALSO TRIED
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
-# CHANGE TO app user
-USER app
 
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["/home/app/entrypoint.prod.sh"]
+ENTRYPOINT ["/app/entrypoint.prod.sh"]
